@@ -1,10 +1,12 @@
 const fs = require('fs')
 const fsp = fs.promises
 const path = require('path')
+const https = require('https')
 const git = require('isomorphic-git')
 const http = require('isomorphic-git/http/node')
 
 const REMOTE_URL = 'https://github.com/Sure-Development/sure_sounds'
+const REMOTE_INTEGRITY_URL = 'https://raw.githubusercontent.com/Sure-Development/sure_sounds/refs/heads/main/INTEGRITY'
 const ROOT_DIR = path.resolve(__dirname, '..')
 const LOCAL_INTEGRITY_PATH = path.join(ROOT_DIR, 'INTEGRITY')
 const UPDATE_DIR = path.join(ROOT_DIR, '.sure_sounds_update')
@@ -38,6 +40,30 @@ async function readJson(filePath) {
     }
     throw error
   }
+}
+
+async function fetchJson(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, { headers: { 'User-Agent': 'node.js' } }, (res) => {
+      let raw = ''
+
+      if (res.statusCode !== 200) {
+        reject(new Error(`Failed to fetch ${url}: ${res.statusCode}`))
+        res.resume()
+        return
+      }
+
+      res.setEncoding('utf8')
+      res.on('data', (chunk) => { raw += chunk })
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(raw))
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }).on('error', reject)
+  })
 }
 
 async function removeDirectory(dir) {
@@ -75,14 +101,10 @@ function integritiesMatch(localIntegrity, remoteIntegrity) {
 
 async function main() {
   const localIntegrity = await readJson(LOCAL_INTEGRITY_PATH)
-  await cloneRepository(UPDATE_DIR)
-
-  const remoteIntegrityPath = path.join(UPDATE_DIR, 'INTEGRITY')
-  const remoteIntegrity = await readJson(remoteIntegrityPath)
+  const remoteIntegrity = await fetchJson(REMOTE_INTEGRITY_URL)
 
   if (!remoteIntegrity) {
-    console.error('❌ Remote INTEGRITY file not found in cloned repository.')
-    await removeDirectory(UPDATE_DIR)
+    console.error('❌ Remote INTEGRITY file not found at:', REMOTE_INTEGRITY_URL)
     process.exit(1)
   }
 
@@ -92,7 +114,10 @@ async function main() {
     return
   }
 
-  console.log('⚠️  INTEGRITY mismatch detected. Update clone is available at:')
+  console.log('⚠️  INTEGRITY mismatch detected. Cloning latest repository...')
+  await cloneRepository(UPDATE_DIR)
+
+  console.log('✅ Update clone is available at:')
   console.log(`   ${UPDATE_DIR}`)
   console.log('You can now inspect the cloned repository or replace your local files from this clone.')
 }
