@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "generated": "2026-05-12T06:18:21.860Z",
+  "fileCount": 5,
+  "files": {
+    "click.mp3": {
+      "hash": "8d81cbfe9a05b30da6730f03c1976e59143cb425f8fa4d9e4129df6f65643b7a",
+      "size": 1536,
+      "timestamp": "2026-05-12T06:18:21.859Z"
+    },
+    "failed.mp3": {
+      "hash": "d3877173a78524e325d9b07b5a263949a8141b19e80252758cba9a64a253f525",
+      "size": 16977,
+      "timestamp": "2026-05-12T06:18:21.860Z"
+    },
+    "hover.mp3": {
+      "hash": "09744f84f762073c0f6f4a52f19121323d64e1d3a46d62712ea4cdc85a26a3e6",
+      "size": 1536,
+      "timestamp": "2026-05-12T06:18:21.860Z"
+    },
+    "money.mp3": {
+      "hash": "0d8034f8a9f18365b3d96892644fbb8e7d7507cd6f27183767520adc03ab9216",
+      "size": 11702,
+      "timestamp": "2026-05-12T06:18:21.860Z"
+    },
+    "success.mp3": {
+      "hash": "fe64ebc5150a1f1fb0ab2babda798d7e68fe412d1f864582e83915fcb561a056",
+      "size": 9195,
+      "timestamp": "2026-05-12T06:18:21.860Z"
+    }
+  }
+}

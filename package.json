@@ -1,0 +1,17 @@
+{
+  "name": "sure_sounds",
+  "private": false,
+  "scripts": {
+    "update:integrity": "bun update-integrity.js",
+    "update:auto": "node server/init.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "isomorphic-git": "^1.37.6"
+  }
+}

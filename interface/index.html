@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sure_sounds</title>
+</head>
+<body>
+  <script src="./assets/howler.min.js"></script>
+  <script>
+    const prefixPath = '../sounds'
+
+    window.addEventListener('message', (event) => {
+      const { type, data } = event.data
+      if (type === 'playSound') {
+        const { namespace, name, volume } = data
+        const filePath = `${prefixPath}/${namespace.trim().length === 0 || namespace === '' ? name : `${namespace}/${name}`}`
+        const sound = new Howl({
+          src: [filePath],
+          volume: volume || 1.0,
+          loop: loop || false,
+        })
+        sound.play()
+      }
+    })
+  </script>
+</body>
+</html>
