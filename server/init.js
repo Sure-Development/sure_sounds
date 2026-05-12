@@ -80,7 +80,7 @@ async function cloneRepository(dir) {
   await removeDirectory(dir)
   await fsp.mkdir(dir, { recursive: true })
 
-  console.log(`📦 Cloning repository to ${dir} ...`)
+  console.log(`^7[INFO] [sure_sounds] ^7Cloning repository to ${dir} ...`)
   await git.clone({
     fs,
     http,
@@ -104,25 +104,25 @@ async function main() {
   const remoteIntegrity = await fetchJson(REMOTE_INTEGRITY_URL)
 
   if (!remoteIntegrity) {
-    console.error('❌ Remote INTEGRITY file not found at:', REMOTE_INTEGRITY_URL)
+    console.error('^1[ERROR] [sure_sounds] ^7Remote INTEGRITY file not found at:', REMOTE_INTEGRITY_URL)
     process.exit(1)
   }
 
   if (integritiesMatch(localIntegrity, remoteIntegrity)) {
-    console.log('✅ Local INTEGRITY matches remote. No update required.')
+    console.log('^2[INFO] [sure_sounds] ^7Local INTEGRITY matches remote. No update required.')
     await removeDirectory(UPDATE_DIR)
     return
   }
 
-  console.log('⚠️  INTEGRITY mismatch detected. Cloning latest repository...')
+  console.log('^3[WARNING] [sure_sounds] ^7INTEGRITY mismatch detected. Cloning latest repository...')
   await cloneRepository(UPDATE_DIR)
 
-  console.log('✅ Update clone is available at:')
+  console.log('^2[INFO] [sure_sounds] ^7Update clone is available at:')
   console.log(`   ${UPDATE_DIR}`)
   console.log('You can now inspect the cloned repository or replace your local files from this clone.')
 }
 
 main().catch((error) => {
-  console.error('Update check failed:', error)
+  console.error('^1[ERROR] [sure_sounds] ^7Update check failed:', error)
   process.exit(1)
 })
