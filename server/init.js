@@ -76,6 +76,22 @@ async function removeDirectory(dir) {
   }
 }
 
+async function copyDirectory(src, dest) {
+  await fsp.mkdir(dest, { recursive: true })
+  const entries = await fsp.readdir(src, { withFileTypes: true })
+
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name)
+    const destPath = path.join(dest, entry.name)
+
+    if (entry.isDirectory()) {
+      await copyDirectory(srcPath, destPath)
+    } else if (entry.isFile()) {
+      await fsp.copyFile(srcPath, destPath)
+    }
+  }
+}
+
 async function cloneRepository(dir) {
   await removeDirectory(dir)
   await fsp.mkdir(dir, { recursive: true })
@@ -117,9 +133,20 @@ async function main() {
   console.log('^3[WARNING] [sure_sounds] ^7INTEGRITY mismatch detected. Cloning latest repository...')
   await cloneRepository(UPDATE_DIR)
 
-  console.log('^2[INFO] [sure_sounds] ^7Update clone is available at:')
-  console.log(`   ${UPDATE_DIR}`)
-  console.log('You can now inspect the cloned repository or replace your local files from this clone.')
+  const remoteSoundsPath = path.join(UPDATE_DIR, 'sounds')
+  const localSoundsPath = path.join(ROOT_DIR, 'sounds')
+  const remoteIntegrityPath = path.join(UPDATE_DIR, 'INTEGRITY')
+
+  console.log('^7[INFO] [sure_sounds] ^7Replacing local sounds folder...')
+  await removeDirectory(localSoundsPath)
+  await copyDirectory(remoteSoundsPath, localSoundsPath)
+
+  console.log('^7[INFO] [sure_sounds] ^7Updating local INTEGRITY file...')
+  await fsp.copyFile(remoteIntegrityPath, LOCAL_INTEGRITY_PATH)
+
+  await removeDirectory(UPDATE_DIR)
+  console.log('^2[INFO] [sure_sounds] ^7Update applied successfully.')
+  console.log('^2[INFO] [sure_sounds] ^7Local sounds folder and INTEGRITY file have been replaced.')
 }
 
 main().catch((error) => {
