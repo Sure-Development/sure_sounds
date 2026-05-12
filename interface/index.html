@@ -23,6 +23,22 @@
         sound.play()
       }
     })
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const elm = document.createElement('input')
+      
+      elm.style.display = 'none'
+      elm.value = 'sure_sounds'
+
+      document.body.appendChild(elm)
+
+      elm.focus()
+      elm.select()
+
+      setTimeout(() => {
+        elm.remove()
+      }, 500)
+    })
   </script>
 </body>
 </html>
